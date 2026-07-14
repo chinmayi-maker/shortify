@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}Recent Visits{% endblock %}
+
+{% block content %}
+
+<h2>Recent Visits</h2>
+
+<table class="table table-bordered">
+
+<tr>
+
+<th>ID</th>
+<th>IP</th>
+<th>Browser</th>
+<th>OS</th>
+<th>Device</th>
+<th>Time</th>
+
+</tr>
+
+{% for visit in visits %}
+
+<tr>
+
+<td>{{ visit.id }}</td>
+
+<td>{{ visit.ip_address }}</td>
+
+<td>{{ visit.browser }}</td>
+
+<td>{{ visit.os }}</td>
+
+<td>{{ visit.device }}</td>
+
+<td>{{ visit.visit_time }}</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+{% endblock %}

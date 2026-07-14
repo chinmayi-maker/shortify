@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block title %}
+Admin Analytics
+{% endblock %}
+
+{% block content %}
+
+<h2 class="mb-4">
+    Platform Analytics
+</h2>
+
+<div class="row">
+
+    <div class="col-md-3">
+
+        <div class="card shadow text-center">
+
+            <div class="card-body">
+
+                <h5>Users</h5>
+
+                <h2>{{ total_users }}</h2>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-md-3">
+
+        <div class="card shadow text-center">
+
+            <div class="card-body">
+
+                <h5>URLs</h5>
+
+                <h2>{{ total_urls }}</h2>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-md-3">
+
+        <div class="card shadow text-center">
+
+            <div class="card-body">
+
+                <h5>Clicks</h5>
+
+                <h2>{{ total_clicks }}</h2>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-md-3">
+
+        <div class="card shadow text-center">
+
+            <div class="card-body">
+
+                <h5>QR Scans</h5>
+
+                <h2>{{ total_scans }}</h2>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

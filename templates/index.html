@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Shortify - URL Shortener</title>
+
+<style>
+body{
+    margin:0;
+    font-family:'Segoe UI',Arial,sans-serif;
+    background:
+      linear-gradient(rgba(255,255,255,.85),rgba(255,255,255,.85)),
+      url("https://img.freepik.com/free-vector/abstract-geometric-wireframe-background_52683-59421.jpg");
+    background-size:cover;
+    background-position:center;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+}
+
+/* HEADER */
+header{
+    background:rgba(11,23,54,.95);
+    padding:18px 70px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.logo-box{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+.logo-box img{ height:42px; }
+
+header h2{ color:#00c4ff;margin:0;font-size:26px; }
+header span{ color:#ddd;font-size:14px; }
+
+/* CENTER */
+.container{
+    flex:1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+/* GLASS CARD */
+.card{
+    backdrop-filter: blur(12px);
+    background:rgba(255,255,255,.4);
+    border-radius:22px;
+    padding:50px;
+    width:430px;
+    box-shadow:
+      0 30px 80px rgba(0,0,0,.25),
+      inset 0 0 20px rgba(255,255,255,.35);
+    text-align:center;
+}
+
+/* TITLE */
+h1{ color:#0b1736; }
+
+/* FLOAT INPUT */
+.field{ position:relative;margin-top:30px; }
+
+.field input{
+    width:100%;
+    padding:16px;
+    border-radius:14px;
+    border:none;
+    font-size:16px;
+    background:white;
+    box-shadow:0 10px 25px rgba(0,0,0,.2);
+    outline:none;
+}
+
+.field label{
+    position:absolute;
+    left:16px;
+    top:16px;
+    color:#777;
+    transition:.3s;
+    pointer-events:none;
+}
+
+.field input:focus + label,
+.field input:not(:placeholder-shown)+label{
+    top:-10px;
+    background:white;
+    padding:2px 8px;
+    border-radius:6px;
+    font-size:13px;
+    color:#0077ff;
+}
+
+/* BUTTON */
+button{
+    margin-top:30px;
+    width:100%;
+    padding:16px;
+    border:none;
+    border-radius:16px;
+    font-size:17px;
+    color:white;
+    cursor:pointer;
+    background-size:200% auto;
+    background-image:linear-gradient(45deg,#00c4ff,#0077ff,#00ffc8);
+    transition:.5s;
+    box-shadow:0 15px 35px rgba(0,140,255,.6);
+}
+button:hover{ background-position:right center; transform:scale(1.06); }
+
+/* RESULT */
+.result{
+    margin-top:30px;
+    padding:18px;
+    border-radius:18px;
+    background:white;
+    box-shadow:0 12px 30px rgba(0,0,0,.2);
+}
+.result a{ color:#0077ff;font-weight:bold; }
+
+/* COPY BUTTON */
+.copy{
+    margin-top:12px;
+    display:inline-block;
+    padding:8px 18px;
+    border-radius:12px;
+    background:#0b1736;
+    color:white;
+    cursor:pointer;
+    transition:.3s;
+}
+.copy:hover{ transform:scale(1.05); }
+
+/* FOOTER */
+footer{
+    background:rgba(11,23,54,.95);
+    color:#ccc;
+    text-align:center;
+    padding:16px;
+}
+
+/* ✅ CUSTOM ALERT WINDOW */
+.alert-overlay{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,.55);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    visibility:hidden;
+    opacity:0;
+    transition:.3s;
+    z-index:9999;
+}
+
+.alert-overlay.show{
+    visibility:visible;
+    opacity:1;
+}
+
+.alert-card{
+    background:white;
+    padding:28px 35px;
+    border-radius:18px;
+    text-align:center;
+    width:330px;
+    animation:pop .25s ease;
+    box-shadow:0 25px 60px rgba(0,0,0,.4);
+}
+
+.alert-card h3{
+    margin:0;
+    color:#0b1736;
+}
+
+.alert-card p{
+    margin:15px 0 25px;
+    color:#444;
+    line-height:1.4;
+}
+
+.alert-card button{
+    padding:10px 26px;
+    border:none;
+    border-radius:12px;
+    background:#0077ff;
+    color:white;
+    cursor:pointer;
+    font-size:15px;
+    width:120px;
+}
+
+.alert-card button:hover{
+    background:#005be0;
+}
+
+@keyframes pop{
+    from{transform:scale(.7);opacity:0}
+    to{transform:scale(1);opacity:1}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="logo-box">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="Shortify Logo">
+        <h2>Shortify</h2>
+    </div>
+    <span>Simple • Fast • Secure</span>
+</header>
+
+<div class="container">
+<div class="card">
+
+<h1>Shorten Your Link</h1>
+
+<form method="POST">
+<div class="field">
+<input type="text" name="long_url" required placeholder=" ">
+<label>Paste your long URL here</label>
+</div>
+<button>Shorten Now 🚀</button>
+</form>
+
+{% if short_url %}
+<div class="result">
+Your short link:<br>
+<a id="shortLink" href="{{ short_url }}" target="_blank">{{ short_url }}</a><br>
+<div class="copy" id="copyBtn" onclick="copyLink()">Copy</div>
+</div>
+{% endif %}
+
+</div>
+</div>
+
+<footer>
+© 2026 Shortify | Built with Flask
+</footer>
+
+<!-- ✅ CUSTOM ALERT WINDOW -->
+<div id="alertBox" class="alert-overlay">
+  <div class="alert-card">
+      <h3 id="alertTitle">Alert</h3>
+      <p id="alertMessage">Message here</p>
+      <button onclick="closeAlert()">OK</button>
+  </div>
+</div>
+
+<script>
+function showAlert(title,message){
+    document.getElementById("alertTitle").innerText = title;
+    document.getElementById("alertMessage").innerText = message;
+    document.getElementById("alertBox").classList.add("show");
+}
+
+function closeAlert(){
+    document.getElementById("alertBox").classList.remove("show");
+}
+
+/* fallback copy */
+function fallbackCopy(text){
+    const textarea=document.createElement("textarea");
+    textarea.value=text;
+    document.body.appendChild(textarea);
+    textarea.select();
+    try{
+        document.execCommand("copy");
+        document.body.removeChild(textarea);
+        return true;
+    }catch{
+        document.body.removeChild(textarea);
+        return false;
+    }
+}
+
+function copyLink(){
+    const el=document.getElementById("shortLink");
+
+    if(!el){
+        showAlert("Nothing to Copy","Create a short link first!");
+        return;
+    }
+
+    const link=el.innerText;
+    const btn=document.getElementById("copyBtn");
+
+    if(navigator.clipboard && window.isSecureContext){
+        navigator.clipboard.writeText(link)
+        .then(()=>{
+            btn.innerText="Copied ✓";
+            btn.style.background="#00c4ff";
+            showAlert("Success","Link copied successfully!");
+
+            setTimeout(()=>{
+                btn.innerText="Copy";
+                btn.style.background="#0b1736";
+            },2000);
+        })
+        .catch(()=>{
+            if(fallbackCopy(link)){
+                showAlert("Copied","Link copied in compatibility mode.");
+            }else{
+                showAlert("Copy Failed","Browser blocked clipboard permission.");
+            }
+        });
+    }else{
+        if(fallbackCopy(link)){
+            showAlert("Copied","Link copied in compatibility mode.");
+        }else{
+            showAlert("Unsupported","Clipboard not supported in this browser.");
+        }
+    }
+}
+
+/* ✅ Show invalid URL alert from Flask (server validation) */
+{% if error_msg %}
+showAlert("Invalid URL","{{ error_msg }}");
+{% endif %}
+</script>
+
+</body>
+</html>

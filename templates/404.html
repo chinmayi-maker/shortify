@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}
+404 - Page Not Found
+{% endblock %}
+
+{% block content %}
+
+<div class="error-page">
+
+    <div class="error-card">
+
+        <div class="error-number">
+
+            404
+
+        </div>
+
+        <h1>
+
+            Oops! Page Not Found
+
+        </h1>
+
+        <p>
+
+            The page you're looking for doesn't exist
+            or may have been moved.
+
+        </p>
+
+        <div class="error-buttons">
+
+            <a
+            href="{{ url_for('dashboard') }}"
+            class="back-btn">
+
+                <i class="fa-solid fa-house"></i>
+
+                Dashboard
+
+            </a>
+
+            <a
+            href="{{ url_for('create') }}"
+            class="create-btn">
+
+                <i class="fa-solid fa-plus"></i>
+
+                Create URL
+
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Dashboard - SHORTIFY</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+<body>
+
+<nav class="navbar">
+
+    <div class="logo">
+        🚀 SHORTIFY
+    </div>
+
+    <div class="nav-links">
+
+        <a href="/dashboard">Dashboard</a>
+
+        <a href="/create">Create URL</a>
+
+        <a href="/top-urls">Top URLs</a>
+
+        <a href="/profile">Profile</a>
+
+        <a class="logout-btn"
+           href="/logout">
+           Logout
+        </a>
+
+    </div>
+
+</nav>
+
+<div class="container">
+
+    <div class="dashboard-header">
+
+        <h1>
+            Welcome {{ session.username }}
+        </h1>
+
+        <a class="create-btn"
+           href="/create">
+
+           + Create URL
+
+        </a>
+
+    </div>
+
+    <div class="stats-grid">
+
+        <div class="stats-card blue">
+
+            <h2>Total URLs</h2>
+
+            <h1>{{ total_urls }}</h1>
+
+        </div>
+
+        <div class="stats-card green">
+
+            <h2>Total Clicks</h2>
+
+            <h1>{{ total_clicks }}</h1>
+
+        </div>
+
+    </div>
+
+    <div class="table-container">
+
+        <h2>My URLs</h2>
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>Short Code</th>
+
+                    <th>Long URL</th>
+
+                    <th>Category</th>
+
+                    <th>Clicks</th>
+
+                    <th>Created</th>
+
+                    <th>Actions</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {% for url in urls %}
+
+                <tr>
+
+                    <td>
+                        {{ url.short_code }}
+                    </td>
+
+                    <td class="long-url">
+                        {{ url.long_url }}
+                    </td>
+
+                    <td>
+                        {{ url.category }}
+                    </td>
+
+                    <td>
+                        {{ url.clicks }}
+                    </td>
+
+                    <td>
+                        {{ url.created_at }}
+                    </td>
+
+                    <td>
+
+                        <a class="delete-btn"
+                           href="/delete/{{ url.id }}">
+
+                           Delete
+
+                        </a>
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+</body>
+</html>

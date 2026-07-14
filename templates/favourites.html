@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}Favorites{% endblock %}
+
+{% block content %}
+
+<h2>Favorite URLs</h2>
+
+<div class="card shadow">
+    <div class="card-body">
+
+        <table class="table table-bordered">
+
+            <tr>
+                <th>Short URL</th>
+                <th>Category</th>
+                <th>Clicks</th>
+            </tr>
+
+            {% for url in urls %}
+
+            <tr>
+
+                <td>
+                    {{ request.host_url }}{{ url.short_code }}
+                </td>
+
+                <td>
+                    {{ url.category }}
+                </td>
+
+                <td>
+                    {{ url.clicks }}
+                </td>
+
+            </tr>
+
+            {% endfor %}
+
+        </table>
+
+    </div>
+</div>
+
+{% endblock %}

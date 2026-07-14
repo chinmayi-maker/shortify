@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Register | SHORTIFY{% endblock %}
+{% block content %}
+<div class="create-page">
+<div class="card create-card">
+<div class="create-header">
+<div class="create-icon"><i class="fa-solid fa-user-plus"></i></div>
+<h1>Create Account</h1>
+<p>Register to start shortening URLs.</p>
+</div>
+
+{% with messages=get_flashed_messages() %}
+{% for message in messages %}
+<div class="flash-message">{{ message }}</div>
+{% endfor %}
+{% endwith %}
+
+<form method="POST">
+<div class="input-group">
+<label>Username</label>
+<input type="text" name="username" required>
+</div>
+
+<div class="input-group">
+<label>Email</label>
+<input type="email" name="email" required>
+</div>
+
+<div class="input-group">
+<label>Password</label>
+<input type="password" name="password" required>
+</div>
+
+<button class="btn create-btn" type="submit">Create Account</button>
+
+<p style="margin-top:20px;text-align:center;">
+Already have an account?
+<a href="/login">Login</a>
+</p>
+</form>
+</div>
+</div>
+{% endblock %}

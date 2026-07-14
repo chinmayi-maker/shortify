@@ -1,0 +1,387 @@
+{% extends "base.html" %}
+
+{% block title %}
+Analytics
+{% endblock %}
+
+{% block content %}
+
+<h2 class="mb-4">
+
+    URL Analytics Dashboard
+
+</h2>
+
+<!-- Summary Cards -->
+
+<div class="row">
+
+    <div class="col-md-4">
+
+        <div class="card text-center shadow">
+
+            <div class="card-body">
+
+                <h5>Total Clicks</h5>
+
+                <h2 class="text-primary">
+
+                    {{ url.clicks }}
+
+                </h2>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-md-4">
+
+        <div class="card text-center shadow">
+
+            <div class="card-body">
+
+                <h5>QR Scans</h5>
+
+                <h2 class="text-success">
+
+                    {{ url.qr_scans }}
+
+                </h2>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-md-4">
+
+        <div class="card text-center shadow">
+
+            <div class="card-body">
+
+                <h5>Category</h5>
+
+                <h2 class="text-warning">
+
+                    {{ url.category }}
+
+                </h2>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<br>
+
+<!-- Browser Statistics -->
+
+<div class="card shadow mb-4">
+
+    <div class="card-body">
+
+        <h4>
+
+            Browser Statistics
+
+        </h4>
+
+        <canvas id="browserChart">
+
+        </canvas>
+
+    </div>
+
+</div>
+
+<!-- Device Statistics -->
+
+<div class="card shadow mb-4">
+
+    <div class="card-body">
+
+        <h4>
+
+            Device Statistics
+
+        </h4>
+
+        <canvas id="deviceChart">
+
+        </canvas>
+
+    </div>
+
+</div>
+
+<!-- Browser Table -->
+
+<div class="card shadow mb-4">
+
+    <div class="card-body">
+
+        <h4>
+
+            Browser Usage
+
+        </h4>
+
+        <table
+        class="table table-bordered">
+
+            <thead>
+
+            <tr>
+
+                <th>Browser</th>
+                <th>Total Visits</th>
+
+            </tr>
+
+            </thead>
+
+            <tbody>
+
+            {% for item in browser_stats %}
+
+            <tr>
+
+                <td>
+
+                    {{ item.browser }}
+
+                </td>
+
+                <td>
+
+                    {{ item.total }}
+
+                </td>
+
+            </tr>
+
+            {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+<!-- Device Table -->
+
+<div class="card shadow mb-4">
+
+    <div class="card-body">
+
+        <h4>
+
+            Device Usage
+
+        </h4>
+
+        <table
+        class="table table-bordered">
+
+            <thead>
+
+            <tr>
+
+                <th>Device</th>
+                <th>Total Visits</th>
+
+            </tr>
+
+            </thead>
+
+            <tbody>
+
+            {% for item in device_stats %}
+
+            <tr>
+
+                <td>
+
+                    {{ item.device }}
+
+                </td>
+
+                <td>
+
+                    {{ item.total }}
+
+                </td>
+
+            </tr>
+
+            {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+<!-- Recent Visits -->
+
+<div class="card shadow">
+
+    <div class="card-body">
+
+        <h4>
+
+            Recent Visits
+
+        </h4>
+
+        <div class="table-responsive">
+
+            <table
+            class="table table-striped table-bordered">
+
+                <thead>
+
+                <tr>
+
+                    <th>ID</th>
+                    <th>IP Address</th>
+                    <th>Browser</th>
+                    <th>OS</th>
+                    <th>Device</th>
+                    <th>Visit Time</th>
+
+                </tr>
+
+                </thead>
+
+                <tbody>
+
+                {% for visit in visits %}
+
+                <tr>
+
+                    <td>
+
+                        {{ visit.id }}
+
+                    </td>
+
+                    <td>
+
+                        {{ visit.ip_address }}
+
+                    </td>
+
+                    <td>
+
+                        {{ visit.browser }}
+
+                    </td>
+
+                    <td>
+
+                        {{ visit.os }}
+
+                    </td>
+
+                    <td>
+
+                        {{ visit.device }}
+
+                    </td>
+
+                    <td>
+
+                        {{ visit.visit_time }}
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- Chart.js -->
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+
+const browserLabels = [
+{% for item in browser_stats %}
+"{{ item.browser }}",
+{% endfor %}
+];
+
+const browserData = [
+{% for item in browser_stats %}
+{{ item.total }},
+{% endfor %}
+];
+
+new Chart(
+document.getElementById(
+'browserChart'
+),
+{
+    type:'pie',
+
+    data:{
+        labels:browserLabels,
+
+        datasets:[{
+            data:browserData
+        }]
+    }
+});
+
+const deviceLabels = [
+{% for item in device_stats %}
+"{{ item.device }}",
+{% endfor %}
+];
+
+const deviceData = [
+{% for item in device_stats %}
+{{ item.total }},
+{% endfor %}
+];
+
+new Chart(
+document.getElementById(
+'deviceChart'
+),
+{
+    type:'bar',
+
+    data:{
+        labels:deviceLabels,
+
+        datasets:[{
+            data:deviceData
+        }]
+    }
+});
+
+</script>
+
+{% endblock %}

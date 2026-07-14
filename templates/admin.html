@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block title %}
+Admin Dashboard
+{% endblock %}
+
+{% block content %}
+
+<h2 class="mb-4">
+    Admin Dashboard
+</h2>
+
+<div class="row">
+
+    <div class="col-md-4">
+
+        <div class="card shadow text-center">
+
+            <div class="card-body">
+
+                <h5>Total Users</h5>
+
+                <h2>{{ total_users }}</h2>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-md-4">
+
+        <div class="card shadow text-center">
+
+            <div class="card-body">
+
+                <h5>Total URLs</h5>
+
+                <h2>{{ total_urls }}</h2>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-md-4">
+
+        <div class="card shadow text-center">
+
+            <div class="card-body">
+
+                <h5>Total Clicks</h5>
+
+                <h2>{{ total_clicks }}</h2>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<br>
+
+<div class="card shadow">
+
+    <div class="card-body">
+
+        <a href="/admin/users"
+           class="btn btn-primary">
+
+            Manage Users
+
+        </a>
+
+        <a href="/admin/urls"
+           class="btn btn-success">
+
+            Manage URLs
+
+        </a>
+
+        <a href="/admin/analytics"
+           class="btn btn-warning">
+
+            Analytics
+
+        </a>
+
+    </div>
+
+</div>
+
+{% endblock %}

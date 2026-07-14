@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block title %}Edit URL{% endblock %}
+
+{% block content %}
+
+<div class="card shadow">
+
+    <div class="card-body">
+
+        <h2>Edit URL</h2>
+
+        <form method="POST">
+
+            <div class="mb-3">
+
+                <label>Long URL</label>
+
+                <input
+                type="url"
+                name="long_url"
+                class="form-control"
+                value="{{ url.long_url }}"
+                required>
+
+            </div>
+
+            <div class="mb-3">
+
+                <label>Category</label>
+
+                <input
+                type="text"
+                name="category"
+                class="form-control"
+                value="{{ url.category }}">
+
+            </div>
+
+            <div class="mb-3">
+
+                <label>Expiry Date</label>
+
+                <input
+                type="date"
+                name="expiry_date"
+                class="form-control"
+                value="{{ url.expiry_date }}">
+
+            </div>
+
+            <div class="mb-3">
+
+                <label>Max Clicks</label>
+
+                <input
+                type="number"
+                name="max_clicks"
+                class="form-control"
+                value="{{ url.max_clicks }}">
+
+            </div>
+
+            <button
+            class="btn btn-success">
+
+            Update URL
+
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}
