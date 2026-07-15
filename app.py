@@ -422,16 +422,28 @@ def create():
         category = request.form.get("category", "")
         custom_code = request.form.get("custom_code", "")
 
-        code, short_url, error = create_short_url_record(
-            long_url=long_url,
-            category=category,
-            custom_code=custom_code,
-            user_id=session["user_id"]
-        )
+        try:
+            code, short_url, error = create_short_url_record(
+                long_url=long_url,
+                category=category,
+                custom_code=custom_code,
+                user_id=session["user_id"]
+            )
 
-        print("Code:", code)
-        print("Short URL:", short_url)
-        print("Error:", error)
+            print("Code:", code)
+            print("Short URL:", short_url)
+            print("Error:", error)
+
+        except Exception as e:
+            print("CREATE ERROR:", str(e))
+            flash(str(e))
+            return render_template(
+                "create.html",
+                short_url=None,
+                code=None,
+                qr_file=None,
+                external_short=None
+            )
 
         if error:
             flash(error)
