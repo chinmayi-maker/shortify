@@ -419,9 +419,7 @@ def create():
     if request.method == "POST":
 
         long_url = request.form["long_url"]
-
         category = request.form.get("category", "")
-
         custom_code = request.form.get("custom_code", "")
 
         code, short_url, error = create_short_url_record(
@@ -431,27 +429,41 @@ def create():
             user_id=session["user_id"]
         )
 
+        print("Code:", code)
+        print("Short URL:", short_url)
+        print("Error:", error)
+
         if error:
             flash(error)
-            return redirect("/create")
+            return render_template(
+                "create.html",
+                short_url=None,
+                code=None,
+                qr_file=None,
+                external_short=None
+            )
 
         qr_file = create_qr(short_url, code)
+        print("QR File:", qr_file)
 
-        # Also create an external short link via is.gd (best-effort)
         external_short = shorten_with_isgd(long_url)
-
-        # include external short in flashed message if present
-        if external_short:
-            flash(f"External short: {external_short}")
 
         flash("Short URL Created Successfully")
 
+        return render_template(
+            "create.html",
+            short_url=short_url,
+            code=code,
+            qr_file=qr_file,
+            external_short=external_short
+        )
+
     return render_template(
         "create.html",
-        short_url=short_url,
-        code=code,
-        qr_file=qr_file,
-        external_short=external_short
+        short_url=None,
+        code=None,
+        qr_file=None,
+        external_short=None
     )
 
 
