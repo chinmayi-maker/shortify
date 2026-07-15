@@ -127,12 +127,17 @@ def create_qr(url, code):
 
 def create_short_url_record(long_url, category, custom_code=None, user_id=None):
 
+    print("LONG URL:", long_url)
+    print("CATEGORY:", category)
+    print("CUSTOM CODE:", custom_code)
+
     long_url = normalize_long_url(long_url)
     category = (category or "").strip() or "general"
     code = (custom_code or "").strip() or generate_code()
 
-    conn = get_db()
+    print("FINAL CODE:", code)
 
+    conn = get_db()
     try:
         while True:
             exists = conn.execute("""
