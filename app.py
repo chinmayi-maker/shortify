@@ -1,6 +1,7 @@
 
 import os
 import re
+from urllib.parse import urlparse
 
 print("CURRENT FOLDER:")
 print(os.getcwd())
@@ -71,6 +72,28 @@ def init_db():
 
 
 # =========================
+# NORMALIZE URL
+# =========================
+
+def normalize_long_url(long_url):
+
+    long_url = (long_url or "").strip()
+
+    if not long_url:
+        return ""
+
+    parsed = urlparse(long_url)
+
+    if parsed.scheme in ("http", "https"):
+        return long_url
+
+    if not parsed.scheme and not long_url.startswith(("/", "#")):
+        return "https://" + long_url
+
+    return long_url
+
+
+# =========================
 # GENERATE SHORT CODE
 # =========================
 
@@ -100,6 +123,57 @@ def create_qr(url, code):
     img.save(os.path.join(qr_dir, f"{safe_code}.png"))
 
     return safe_code
+
+
+def create_short_url_record(long_url, category, custom_code=None, user_id=None):
+
+    long_url = normalize_long_url(long_url)
+    category = (category or "").strip() or "general"
+    code = (custom_code or "").strip() or generate_code()
+
+    conn = get_db()
+
+    try:
+        while True:
+            exists = conn.execute("""
+            SELECT *
+            FROM urls
+            WHERE short_code=?
+            """, (code,)).fetchone()
+
+            if not exists:
+                break
+
+            if custom_code:
+                return None, None, "Short Code Already Exists"
+
+            code = generate_code()
+
+        conn.execute("""
+        INSERT INTO urls(
+            user_id,
+            long_url,
+            short_code,
+            category,
+            created_at
+        )
+        VALUES(?,?,?,?,?)
+        """, (
+            user_id,
+            long_url,
+            code,
+            category,
+            datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        ))
+
+        conn.commit()
+
+    finally:
+        conn.close()
+
+    short_url = request.host_url + code
+
+    return code, short_url, None
 
 
 # =========================
@@ -290,6 +364,44 @@ def dashboard():
 
 
 # =========================
+# SHORTEN API
+# =========================
+
+@app.route("/shorten", methods=["POST"])
+def shorten_api():
+
+    payload = request.get_json(silent=True) or request.form or {}
+
+    long_url = (payload.get("url") or payload.get("long_url") or "").strip()
+
+    if not long_url:
+        return jsonify({"error": "Long URL is required"}), 400
+
+    category = (payload.get("category") or "general").strip()
+    custom_code = (payload.get("custom_code") or "").strip()
+
+    code, short_url, error = create_short_url_record(
+        long_url=long_url,
+        category=category,
+        custom_code=custom_code,
+        user_id=session.get("user_id")
+    )
+
+    if error:
+        return jsonify({"error": error}), 409
+
+    qr_file = create_qr(short_url, code)
+    external_short = shorten_with_isgd(long_url)
+
+    return jsonify({
+        "short_url": short_url,
+        "code": code,
+        "qr_file": qr_file,
+        "external_short": external_short
+    })
+
+
+# =========================
 # CREATE URL
 # =========================
 
@@ -308,52 +420,20 @@ def create():
 
         long_url = request.form["long_url"]
 
-        category = request.form["category"]
+        category = request.form.get("category", "")
 
-        custom_code = request.form["custom_code"]
+        custom_code = request.form.get("custom_code", "")
 
-        code = custom_code if custom_code else generate_code()
-
-        conn = get_db()
-
-        exists = conn.execute("""
-        SELECT *
-        FROM urls
-        WHERE short_code=?
-        """, (
-            code,
-        )).fetchone()
-
-        if exists:
-
-            flash("Short Code Already Exists")
-
-            conn.close()
-
-            return redirect("/create")
-
-        conn.execute("""
-        INSERT INTO urls(
-            user_id,
-            long_url,
-            short_code,
-            category,
-            created_at
+        code, short_url, error = create_short_url_record(
+            long_url=long_url,
+            category=category,
+            custom_code=custom_code,
+            user_id=session["user_id"]
         )
-        VALUES(?,?,?,?,?)
-        """, (
-            session["user_id"],
-            long_url,
-            code,
-            category,
-            datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        ))
 
-        conn.commit()
-
-        conn.close()
-
-        short_url = request.host_url + code
+        if error:
+            flash(error)
+            return redirect("/create")
 
         qr_file = create_qr(short_url, code)
 
@@ -543,4 +623,9 @@ with app.app_context():
 
 if __name__ == "__main__":
 
-    app.run(debug=True)
+    app.run(
+        host="127.0.0.1",
+        port=int(os.environ.get("PORT", "5001")),
+        debug=True,
+        use_reloader=False
+    )

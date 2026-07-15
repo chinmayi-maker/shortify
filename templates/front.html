@@ -73,15 +73,24 @@
         return;
       }
 
-      const response = await fetch("http://localhost:5000/shorten", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ url: longUrl })
-      });
+      try {
+        const response = await fetch("/shorten", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ url: longUrl })
+        });
 
-      const data = await response.json();
-      document.getElementById("result").innerHTML =
-        `Shortened URL: <a href="${data.short_url}" target="_blank">${data.short_url}</a>`;
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || "Unable to shorten URL");
+        }
+
+        document.getElementById("result").innerHTML =
+          `Shortened URL: <a href="${data.short_url}" target="_blank">${data.short_url}</a>`;
+      } catch (error) {
+        document.getElementById("result").textContent = error.message || "Unable to shorten URL";
+      }
     }
   </script>
 </body>
